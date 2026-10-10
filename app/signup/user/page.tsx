@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import axios from "axios"
 import Link from "next/link"
 
@@ -10,6 +11,7 @@ export default function UserSignup() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function handleOnSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -24,6 +26,12 @@ export default function UserSignup() {
     
       })
       console.log(response.data)
+      
+      // Save email to localStorage
+      localStorage.setItem("userEmail", email)
+      
+      // Pass username and email to dashboard via query params
+      router.push(`/dashboard/user?username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}`)
     } catch (err) {
       setError("Signup failed. Please try again.")
       console.error(err)
