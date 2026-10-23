@@ -8,13 +8,13 @@ export default function Home() {
   const [token,setToken]=useState('')
   const [qr,setQr]=useState('')
   async function handleOnStart() {
-      const eventSource = new EventSource('http://localhost:5001/admin/createdynamicqr');
+      const eventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_URL}/admin/createdynamicqr`);
       console.log(eventSource)
     
       eventSource.onmessage = async(event) => {
       console.log("New message:", event.data);
       setToken(event.data);
-      const url = `http://localhost:3000/verify/${token}`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/verify/${token}`;
 
       console.log("QR URL:", url);
       const qrImage = await QRCode.toDataURL(url);
@@ -29,7 +29,7 @@ export default function Home() {
 
   async function handleOnStop() {
     try {
-      const response = await axios.post("http://localhost:5001/admin/stopqr");
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/admin/stopqr`);
       console.log(response.data);
     } catch (error) {
       console.error(error);
