@@ -1,31 +1,36 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import { User, Mail, LogOut ,ScanQrCode} from "lucide-react"
+import { User, Mail, LogOut, ScanQrCode } from "lucide-react"
 import Link from "next/link"
 
-export default function UserDashboard() {
+export default function UserPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-100 p-6">Loading user dashboard...</div>}>
+      <UserDashboard />
+    </Suspense>
+  )
+}
+
+function UserDashboard() {
   const [showProfile, setShowProfile] = useState(false)
   const searchParams = useSearchParams()
-  
-  // Get username and email from query params
+
   const queryUsername = searchParams.get("username")
   const queryEmail = searchParams.get("email")
-  
-  // Use query params if available, otherwise fall back to localStorage or defaults
+
   const [username, setUsername] = useState("User")
   const [email, setEmail] = useState("user@example.com")
-  
+
   useEffect(() => {
     if (queryUsername) {
       setUsername(queryUsername)
     }
-    
+
     if (queryEmail) {
       setEmail(queryEmail)
     } else if (typeof window !== "undefined") {
-      // Try to get from localStorage if not in query params
       const storedEmail = localStorage.getItem("userEmail")
       if (storedEmail) {
         setEmail(storedEmail)
@@ -45,7 +50,6 @@ export default function UserDashboard() {
             Rotating QR
           </h1>
 
-          {/* Profile dropdown container */}
           <div className="relative">
             <button
               type="button"
@@ -57,10 +61,8 @@ export default function UserDashboard() {
               <User className="h-5 w-5" />
             </button>
 
-            {/* Dropdown menu */}
             {showProfile && (
               <div className="absolute right-0 top-12 z-50 w-56 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl sm:top-14 sm:w-64 sm:rounded-xl">
-                {/* Admin credentials */}
                 <div className="border-b border-slate-100 bg-slate-50 p-4">
                   <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
@@ -83,7 +85,6 @@ export default function UserDashboard() {
                   </div>
                 </div>
 
-                {/* Dropdown actions */}
                 <button
                   type="button"
                   onClick={() => setShowProfile(false)}
@@ -116,15 +117,13 @@ export default function UserDashboard() {
           </div>
 
           <div className="flex justify-center">
-            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md shadow-indigo-200 transition hover:bg-indigo-500 hover:shadow-lg sm:w-auto sm:gap-3 sm:rounded-2xl sm:px-6 sm:py-4 sm:text-lg">
+            <Link
+              href="/scan"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md shadow-indigo-200 transition hover:bg-indigo-500 hover:shadow-lg sm:w-auto sm:gap-3 sm:rounded-2xl sm:px-6 sm:py-4 sm:text-lg"
+            >
               <ScanQrCode className="h-5 w-5 sm:h-6 sm:w-6" />
-                <Link
-                href="/scan"
-                className="rounded-xl bg-indigo-600 px-5 py-3 text-white"
-                >
-                Scan QR Code
-                </Link>
-            </button>
+              Scan QR Code
+            </Link>
           </div>
         </div>
       </div>

@@ -1,10 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { User, Mail, LogOut } from "lucide-react"
 
-export default function AdminDashboard() {
+export default function AdminPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-100 p-6">Loading admin dashboard...</div>}>
+      <AdminDashboard />
+    </Suspense>
+  )
+}
+
+function AdminDashboard() {
   const [showProfile, setShowProfile] = useState(false)
   const searchParams = useSearchParams()
   
@@ -20,15 +28,15 @@ export default function AdminDashboard() {
     if (queryUsername) {
       setUsername(queryUsername)
     }
+    else{
+      setUsername("user")
+    }
     
     if (queryEmail) {
       setEmail(queryEmail)
-    } else if (typeof window !== "undefined") {
-      // Try to get from localStorage if not in query params
-      const storedEmail = localStorage.getItem("adminEmail")
-      if (storedEmail) {
-        setEmail(storedEmail)
-      }
+    } 
+    else{
+      setEmail("user@gmail.com")
     }
   }, [queryUsername, queryEmail])
 
